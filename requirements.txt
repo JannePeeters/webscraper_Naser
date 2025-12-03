@@ -7,3 +7,4 @@ Unidecode
 geopy
 gspread
 protobuf
+streamlit-folium
