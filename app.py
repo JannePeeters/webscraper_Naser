@@ -11,7 +11,7 @@ st.write("Hier kun je automatisch gegevens van door jou gekozen bedrijven ophale
 
 # Zet default search_option
 if "search_option" not in st.session_state:
-    st.session_state.search_option = "Categorie typen en plaats selecteren"
+    st.session_state.search_option = "Categorie en plaats typen"
 if "radius_m" not in st.session_state:
     st.session_state.radius_m = 1000
 
@@ -50,17 +50,39 @@ if zoek_knop:
         df_active = upload_to_google_sheets(df, category_input, input_text)
         st.session_state.last_results = df_active.to_dict(orient="records")
 
-# Map + DF naast elkaar tonen
+# DF (en map) tonen
 if st.session_state.get("last_results"):
-    map_col, df_col = st.columns([3, 2])
+    df_active = pd.DataFrame(st.session_state.last_results)
 
-    with map_col:
-        st.subheader("Resultaten op kaart")
-        render_map_and_get_state(radius_m, results=st.session_state.last_results, force_render=True,     key_suffix=f"search_{hash(str(st.session_state.last_results))}")
+    if search_option == "Categorie typen en plaats selecteren op kaart":
+        map_col, df_col = st.columns([3, 2])
 
-    with df_col:
+        with map_col:
+            st.subheader("Resultaten op kaart")
+            render_map_and_get_state(radius_m, results=st.session_state.last_results, force_render=True, key_suffix=f"search_{hash(str(st.session_state.last_results))}")
+
+        with df_col:
+            st.subheader("Resultaten tabel")
+            st.dataframe(df_active)
+
+            excel_buffer = BytesIO()
+            df_active.to_excel(excel_buffer, index=False)
+            excel_buffer.seek(0)
+            st.download_button(
+                label="Download Excel-bestand",
+                data=excel_buffer.getvalue(),
+                file_name="resultaten.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                key="download_excel_rerun"
+            )
+
+            # Link naar Google Sheet
+            st.markdown(
+                "[Klik hier om gegevens van eerdere bedrijven in Google Sheets te bekijken](https://docs.google.com/spreadsheets/d/1tZNnGy-KBW0LdnmzqDbKGgkQ1I8wM7_rf5qnbAkTy0s/edit?gid=0#gid=0)",
+                unsafe_allow_html=True
+            )
+    else:
         st.subheader("Resultaten tabel")
-        df_active = pd.DataFrame(st.session_state.last_results)
         st.dataframe(df_active)
 
         excel_buffer = BytesIO()

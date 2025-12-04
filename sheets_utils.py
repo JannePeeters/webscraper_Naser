@@ -59,7 +59,6 @@ def upload_to_google_sheets(df, category_input, input_text):
             updated_sheet = pd.concat([updated_sheet, df], ignore_index=True)
             worksheet.clear()
             worksheet.update([updated_sheet.columns.tolist()] + updated_sheet.values.tolist())
-            st.success("Resultaten geüpload naar Google Sheets!")
             return df[[c for c in display_cols if c in df.columns]]
 
         # Zorg dat vergelijkingskolommen altijd strings zijn, en normaliseer lege waarden
@@ -122,9 +121,6 @@ def upload_to_google_sheets(df, category_input, input_text):
         # Upload terug naar Google Sheets
         worksheet.clear()
         worksheet.update([updated_sheet.columns.tolist()] + updated_sheet.values.tolist())
-
-        st.success("Resultaten geüpload naar Google Sheets!")
-
         return df[[c for c in display_cols if c in df.columns]]
 
     except Exception as e:

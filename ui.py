@@ -6,7 +6,7 @@ def render_ui():
         ("Categorie en plaats typen", "Categorie typen en plaats selecteren op kaart")
     )
 
-    category_input = st.text_input("Categorie (bijv. restaurant, café, hotel)", "Restaurant")
+    category_input = st.text_input("Categorie (bijv. restaurant, supermarkt)", "Restaurant")
     place_input = None
     radius_m = None
 
